@@ -3,16 +3,14 @@
 ## Volkswagem - Ofertas
 23/04/2018 <br />
 
-<br />
-
 ## Objetivo
-Este documento tem como objetivo instruir a implementação da camada de dados e de data attributes para utilização de recursos de monitoramento do Google Analytics referentes a [Volkswagem Ofertas](https://ofertas.vw.com.br/).
+Este documento tem como objetivo instruir a implementação do Google Tag Manager e da camada de dados e data attributes para utilização de recursos de monitoramento do Google Analytics referentes a [Volkswagem Ofertas](https://ofertas.vw.com.br/).
 
 <br />
 
-<br />
+--- 
 
-### **Descrição Geral**
+### Descrição Geral - Snippet Principal (GTM)
 
 O `snippet` do Google Tag Manager é um pequeno trecho de código javascript ou non-javascript, através do uso de um iframe quando o javascript não está disponível, que é inserido nas páginas do site, tornando possível que a configuração das tags sejam realizadas via interface.
 
@@ -48,7 +46,7 @@ Link de referência: [Documentação Oficial Google Tag Manager](https://develop
 
 ---
 
-## Overview e Descrições Técnicas
+## Overview e Descrições Técnicas - Recursos
 
 ### Camada de dados (DataLayer)
 
@@ -110,7 +108,7 @@ Todos os elementos comuns do html que não são links e que foram mapeados, prec
 
 <br />
 
-## Implementação
+## Implementação - Recursos
 
 A documentação foi descrita para algumas áreas especificas do ambiente [Volkswagem Ofertas](https://ofertas.vw.com.br/).
 
@@ -1297,3 +1295,13 @@ dataLayer.push({
 | [[valor-total-veiculo]] 	| '46760'	 									| Valor total do veículo						|
 | [[preco-veiculo]] 		| '46760.00'									| Preço do veiculo								|
 | [[quantidade-veiculo]]	| '1' 											| Quantidade do veículo 						|
+
+<br>
+
+---
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    document.querySelectorAll("h1 a")[0].style.display = 'none';
+  });
+</script>
