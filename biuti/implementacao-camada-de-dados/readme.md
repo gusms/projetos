@@ -350,10 +350,10 @@ dataLayer.push({
 	'event': 'checkout',
 	'eventCategory': 'biuti:checkout',
 	'eventAction': 'enhanced-ecommerce',
-	'eventLabel': 'checkout-etapa-[[checkout-index]]',
+	'eventLabel': 'checkout-etapa-[[passo-checkout]]',
 	'ecommerce': {
 		'checkout': {
-			'actionField': {'step': '[[passo-checkout]]'},
+			'actionField': {'step': '[[checkout-index]]'},
 			'products': [{
 				'name': '[[nome-produto]]',				
 				'id': '[[id-produto]]',
