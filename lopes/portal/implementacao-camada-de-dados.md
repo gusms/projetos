@@ -3,7 +3,7 @@
 
 ## Objetivo
 
-Este documento tem como objetivo instruir a implementação da camada de dados para utilização de recursos do enhanced ecommerce referentes ao ambiente do site de Biuti.
+Este documento tem como objetivo instruir a implementação da camada de dados para utilização de recursos do enhanced ecommerce referentes ao ambiente do site (Lopes Portal - lopes.com.br).
 
 ## Overview e Descrições Técnicas
 
@@ -16,29 +16,52 @@ Inserir a camada de dados antes do snippet de instalação do Google Tag Manager
 
 ```html
 <script>
-	window.dataLayer = window.dataLayer || [];
-	window.dataLayer = [{
-		'atributo1': 'valor1',
-		'atributo2': 'valor2'
-	}];
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer = [{
+    'atributo1': '[[valor1]]',
+    'atributo2': '[[valor2]]'
+  }];
 </script>
 ```
 
- OU
+OU
 
 ```html
 <script>
-	window.dataLayer = window.dataLayer || [];
-	window.dataLayer.push({
-		'atributo1': 'valor1',
-		'atributo2': 'valor2'
-	});
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    'atributo1': '[[valor1]]',
+    'atributo2': '[[valor2]]'
+  });
 </script>
 ```
 
+### Atributos HTML (Data Attributes)
+
+> São atributos customizados inseridos nos elementos HTML da página, permitindo a inclusão de dados adicionais.
+
+**Instalação**
+1. Elementos: ```<div>Elemento</div>``` <br />
+Todos os elementos do html que serão clicados, deverão ser mapeados recebendo os atributos com sua estrutura no item.
+
+```html
+<div
+  data-gtm-event-category='[[exemplo:valor-categoria]]'
+  data-gtm-event-action='[[exemplo:valor-acao]]'
+  data-gtm-event-label='[[exemplo:valor-rotulo]]'
+ >
+  Texto do elemento
+</div>
+```
+
+#### Importante:
+> Também devem ter os data-attributes `data-gtm-event-category`, `data-gtm-event-action` e `data-gtm-event-label`. Preenchidos conforme instruções específicas.
+
+<br />
+
 ## Implementação
 
-A documentação foi descrita para algumas áreas especificas do ambiente [](http://).
+A documentação foi descrita para algumas áreas especificas do ambiente do site (Lopes Portal - lopes.com.br).
 
 ---
 
@@ -80,17 +103,8 @@ Deve ser disparado um push de dataLayer no momento de carregamento de todas as p
 - **Título ou nome do botão/link:** 'Sair'.
 
 ```html
-<!-- Use se o elemento for um link -->
-<a href="#"
-	class="gtm-link-event"
-	data-gtm-event-category="biuti:conta"
-	data-gtm-event-action="login"
-	data-gtm-event-label="sair"
->Link</a>
-
-<!-- Use se o elemento não for um link -->
-<i 	class="gtm-element-event"
-	data-gtm-event-category="biuti:conta"
+<!-- Use o atributo no elemento a ser clicado -->
+<i 	data-gtm-event-category="biuti:conta"
 	data-gtm-event-action="login"
 	data-gtm-event-label="sair"
 >Botão</i>
