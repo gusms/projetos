@@ -1,13 +1,14 @@
-# Especificação Técnica da Camada de Dados - Lopes Portal
-Última atualização: 08/03/2020
+## Especificação Técnica da Camada de dados - Lopes Novo Portal
+Última atualização: 15/03/2020 <br />
+
 
 ## Objetivo
-
-Este documento tem como objetivo instruir a implementação da camada de dados para utilização de recursos do enhanced ecommerce referentes ao ambiente do site (Lopes Portal - lopes.com.br).
+Este documento tem como objetivo instruir a implementação da camada de dados e de data attributes para utilização de recursos de monitoramento do Google Analytics referentes ao ambiente de  (Lopes Portal - lopes.com.br).
 
 ## Overview e Descrições Técnicas
 
 ### Camada de dados (DataLayer)
+
 > É um array de objetos javascript utilizado pelo Google Tag Manager para receber em seus atributos, dados importantes do site.
 Para implementar o dataLayer no site, o desenvolvedor pode utilizar formas diferentes para preencher os dados. Essas formas são dependentes da ação estabelecida na documentação e também do nível da interação.
 
@@ -16,11 +17,11 @@ Inserir a camada de dados antes do snippet de instalação do Google Tag Manager
 
 ```html
 <script>
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer = [{
-    'atributo1': '[[valor1]]',
-    'atributo2': '[[valor2]]'
-  }];
+	window.dataLayer = window.dataLayer || [];
+	window.dataLayer = [{
+		'atributo1': '[[valor1]]',
+		'atributo2': '[[valor2]]'
+	}];
 </script>
 ```
 
@@ -28,11 +29,11 @@ OU
 
 ```html
 <script>
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    'atributo1': '[[valor1]]',
-    'atributo2': '[[valor2]]'
-  });
+	window.dataLayer = window.dataLayer || [];
+	window.dataLayer.push({
+		'atributo1': '[[valor1]]',
+		'atributo2': '[[valor2]]'
+	});
 </script>
 ```
 
@@ -45,33 +46,28 @@ OU
 Todos os elementos do html que serão clicados, deverão ser mapeados recebendo os atributos com sua estrutura no item.
 
 ```html
-<div
-  data-gtm-event-category='[[exemplo:valor-categoria]]'
-  data-gtm-event-action='[[exemplo:valor-acao]]'
-  data-gtm-event-label='[[exemplo:valor-rotulo]]'
- >
-  Texto do elemento
+<div 	
+   	data-gtm-event-category="[[exemplo:valor-categoria]]"
+ 	data-gtm-event-action="[[exemplo:valor-acao]]"
+ 	data-gtm-event-label="[[exemplo:valor-rotulo]]"
+>
+	Texto do elemento
 </div>
 ```
 
 #### Importante:
-> Também devem ter os data-attributes `data-gtm-event-category`, `data-gtm-event-action` e `data-gtm-event-label`. Preenchidos conforme instruções específicas.
+> Todos itens especificados devem ter os data-attributes `data-gtm-event-category`, `data-gtm-event-action` e `data-gtm-event-label`. Preenchidos conforme instruções específicas.
 
-<br />
 
 ## Implementação
 
-A documentação foi descrita para algumas áreas especificas do ambiente do site (Lopes Portal - lopes.com.br).
 
----
-
-## Especificações Globais:
+### Especificações Globais:
 
 **Itens Gerais:**<br />
-
-Todas as informações entre colchetes `[[  ]]` são variáveis dinâmicas que devem ser preenchidas com seus respectivos valores;<br />
-Todos os valores enviados ao Google Analytics devem estar sanitizados, ou seja, sem espaços, acentuação ou caracteres especiais;<br />
-Caso a informação solicitada não estiver disponível retornar 'nao_disponivel'.
+Todas as informações entre colchetes `[[  ]]` são variáveis dinâmicas que devem ser preenchidas com seus respectivos valores; <br />
+Todos os valores enviados ao Google Analytics devem estar sanitizados, ou seja, sem espaços, acentuação ou caracteres especiais; <br />
+Caso a informação solicitada não estiver disponível retornar tipagem `undefined`.
 
 ### Dimensões Globais:
 
@@ -81,8 +77,79 @@ Deve ser disparado um push de dataLayer no momento de carregamento de todas as p
 ```html
 <script>
 	window.dataLayer = window.dataLayer || [];
-	dataLayer.push({
-		'dimension1': '[[User ID]]'
+	window.dataLayer.push({
+		'event':'global'
+		'dimension1': '[[UserID]]',
+		'dimension4': '[[Tipo-perfil]]',
+		'dimension5': '[[Status-Login]]'
+	});
+</script>
+```
+
+| Variável 				| Exemplo 				| Descrição 									|
+| :--------------------	| :-------------------- | :-------------------------------------------	|
+| [[UserID]]			| '1234' e etc 				| ID único de usuário defeinido após o cadastro	|
+| [[Tipo-perfil]]			| 'cliente', 'corretor'  e etc	| Tipo do perfil do usuário logado	|
+| [[Status-Login]]			| 'logado', 'deslogado'				| Status do cliente no site	|
+
+---
+
+### Especificação de páginas:
+
+**Na troca de páginas ou rotas em sites Single Page Application (SPA)**
+
+- **Onde:**  No carregamento da troca da rota
+
+```html
+<script>
+	window.dataLayer = window.dataLayer || [];
+	window.dataLayer.push({
+		'event':'vpageview-route'
+		'page': '[[Page Path]]',
+	});
+</script>
+```
+
+| Variável 				| Exemplo 				| Descrição 									|
+| :--------------------	| :-------------------- | :-------------------------------------------	|
+| [[Page Path]]			| '/path/pagina.html?chave=valor#fragment' 				| Caminho da página completo com querystring e fragment |
+
+
+
+
+### Especificação de Conversões e Micro-conversões:
+
+## Gerais
+
+**No clique dos botões do chat**
+
+- **Onde:**  No icone e links para abrir o chat que aparecem em todas as páginas do site
+- **Título ou nome do botão/link:**  Chat
+
+```html
+<!-- Use se os atributos no elemento a ser clicado -->
+<div
+     data-gtm-event-category="lopes:geral" 
+     data-gtm-event-action="clique" 
+     data-gtm-event-label="chat"
+>
+Botão
+</div>
+```
+
+<br />
+
+**No carregamento de erros genéricos no site**
+- **Onde:** Nos modais de erros em todas as páginas do site
+
+```html
+<script>
+	window.dataLayer.push({
+		'event': 'event',
+		'eventCategory': 'lopes:geral',
+		'eventAction': 'erro:modal',
+		'eventLabel': '[[tipo-erro]]',
+		'noInteraction': '1'
 	});
 </script>
 ```
@@ -90,43 +157,57 @@ Deve ser disparado um push de dataLayer no momento de carregamento de todas as p
 
 | Variável 				| Exemplo 				| Descrição 									|
 | :--------------------	| :-------------------- | :-------------------------------------------	|
-| [[User ID]]			| '012345'				| Retornar o ID único do usuário logado			|
+| [[tipo-erro]]			| 'campos incorretos - email', 'erro de envio' e etc				| Deve retornar os erros na tentativa de envio do formulário	|
 
----
+<br />
 
-### Especificação de Micro-conversões:
-
-
-**No clique dos botões que tenham a ação para sair e deslogar da minha conta:**<br />
-
-- **Onde:**  No clique de 'sair' do menu superior em minha conta; No clique de sair dentro de minha conta;
-- **Título ou nome do botão/link:** 'Sair'.
+**No carregamento de página de conteúdos 'not found'.**
+- **Onde:**  Nas páginas 404 do site
 
 ```html
-<!-- Use o atributo no elemento a ser clicado -->
-<i 	data-gtm-event-category="biuti:conta"
-	data-gtm-event-action="login"
-	data-gtm-event-label="sair"
->Botão</i>
+<script>
+	window.dataLayer.push({
+		'event': 'event',
+		'eventCategory': 'lopes:geral',
+		'eventAction': 'erro:pagina',
+		'eventLabel': '404',
+		'noInteraction': '1'
+	});
+</script>
 ```
 
 <br />
 
----
+**No clique dos botões de simular financiamento**
+- **Onde:**  No botões para transferir pro site de financiamento nas páginas de ficha de imóvel
+- **Título ou nome do botão/link:**  Simule Financiamento
 
-### Especificação de Conversões:
+```html
+<!-- Use se os atributos no elemento a ser clicado -->
+<div
+     data-gtm-event-category="lopes:ficha-imovel" 
+     data-gtm-event-action="clique" 
+     data-gtm-event-label="simular-financiamento"
+>
+Botão
+</div>
+```
 
-**No callback de sucesso de todos os logins de usuário no ecommerce:**<br />
+## Credenciais - Login e Criar Conta
 
-- **Onde:** Após clicar em entrar na sessão 'Eu já estou registrado' do site ou no modal flutuante de "Acesse Já". 
+**No callback de sucesso do formulário para login do usuário no site.**
+- **Onde:** Na seção de login de corretor ou cliente.
 
 ```html
 <script>
-	dataLayer.push({
+	window.dataLayer.push({
 		'event': 'login',
-		'eventCategory': 'biuti:[[conta || modal]]',
-		'eventAction': 'login',
-		'eventLabel': 'sucesso'
+		'eventCategory': 'lopes:credenciais',
+		'eventAction': 'callback:login',
+		'eventLabel': 'sucesso',
+		'dimension1': '[[UserID]]',
+		'dimension4': '[[Tipo-perfil]]',
+		'dimension5': '[[Status-Login]]'
 	});
 </script>
 ```
@@ -134,21 +215,231 @@ Deve ser disparado um push de dataLayer no momento de carregamento de todas as p
 
 | Variável 				| Exemplo 				| Descrição 									|
 | :--------------------	| :-------------------- | :-------------------------------------------	|
-| [[conta ou modal]]	| 'conta' ou 'modal'	| Retornar em qual tela o usuário realizou o login.	|
+| [[UserID]]			| '1234' e etc 				| ID único de usuário defeinido após o cadastro	|
+| [[Tipo-perfil]]			| 'cliente', 'corretor'  e etc	| Tipo do perfil do usuário logado	|
+| [[Status-Login]]			| 'logado', 'deslogado'				| Status do cliente no site	|
 
 <br />
 
-
-**No callback de sucesso do primeiro cadastro do usuário no ecommerce:**<br />
-
-- **Onde:** Na página deslogada na sessão de registre-se para cadastro de usuário no site. 
+**No callback de sucesso do formulário para cadastro do usuário no site.**
+- **Onde:** Na seção de criar conta de corretor ou cliente.
 
 ```html
 <script>
-	dataLayer.push({
+	window.dataLayer.push({
 		'event': 'conversion',
-		'eventCategory': 'biuti:conta',
-		'eventAction': 'cadastro',
+		'eventCategory': 'lopes:credenciais',
+		'eventAction': 'callback:cadastro',
+		'eventLabel': 'sucesso',
+		'dimension1': '[[UserID]]',
+		'dimension4': '[[Tipo-perfil]]',
+
+	});
+</script>
+```
+
+
+| Variável 				| Exemplo 				| Descrição 									|
+| :--------------------	| :-------------------- | :-------------------------------------------	|
+| [[UserID]]			| '1234' e etc 				| ID único de usuário defeinido após o cadastro	|
+| [[Tipo-perfil]]			| 'cliente', 'corretor'  e etc	| Tipo do perfil do usuário logado	|
+
+<br />
+
+## Enhanced E-commerce - Imóvel e Lead Fale com Corretor
+
+**Na troca de conteudo (onChange) do campo nome do formulário 'Fale com o Corretor'**
+- **Onde:** No formulário Fale com o Consultor, nas páginas de ficha de imóvel.
+
+```html
+<script>
+	window.dataLayer.push({
+		'event': 'addToCart',
+		'eventCategory': 'lopes:ecommerce:[[nome-formulario]]',
+		'eventAction': 'addToCart',
+		'eventLabel': undefined,
+		'ecommerce': {
+			'add': {
+				'products': [{
+					'dimension7': '[[imovel-end-completo]]',
+					'id': '[[id-produto]]',
+					'name': '[[nome-produto]]',
+					'price': '[[preco-produto]',
+					'category': '[[categoria-produto]]',
+					'brand': '[[marca-produto]]',
+					'variant': '[[variacao-produto]]',
+					'quantity': '[[quantidade-produto]]'
+				}]
+			}
+		}
+	});
+</script>
+```
+
+| Variável                 | Exemplo                                    | Descrição                                                            |
+|--------------------------|--------------------------------------------|----------------------------------------------------------------------|
+| [[nome-formulario]]    | 'fale-com-corretor'e etc  | Deve retornar o nome do formulário.                                       |
+| [[imovel-end-completo]]          | 'QnJhc2lsL1NQL1PDo28gUGF1bG8vQXZlbmlkYSBGYXJpYSBMaW1hLCAyMDAw'          | Endereço completo do imóvel no padrão Pais/UF/Cidade/Logradouro hashed em base64|
+| [[id-produto]]    | '123456789'e etc  | ID do produto (imóvel).                                       |
+| [[nome-produto]]         | 'Belint Bela Vista' e etc | Nome do produto (imóvel).                                     |
+| [[preco-produto] | '650000.00' e etc                        | Preço do produto (imóvel)                           |
+| [[categoria-produto]]    | 'Lançamento - comercialização', 'Lançamento - breve', 'Lançamento - futuro', 'Pronto pra morar', 'Aluguel' e etc  | Categorização do produto (imóvel)                                |
+| [[marca-produto]]        | 'Lopes Prime', 'Lopes São Paulo' e etc                             | Nome da empresa comercializadora (imóvel).                                    |
+| [[variacao-produto]]     | 'SP/São Paulo/Zona Oeste/Pinheiros'        | UF/Cidade/Região/Bairro do produto (imóvel).      |
+| [[quantidade-produto]]   | '1' e etc                                  | Quantidade do produto (imóvel).                               |
+
+<br />
+
+**No clique do botão enviar do formulário 'Fale com o Corretor', mesmo que não esteja totalmente preenchido e correto**
+- **Onde:** No formulário Fale com o Consultor, nas páginas de ficha de imóvel.
+
+```html
+<script>
+dataLayer.push({
+  'event': 'checkout',
+  'eventCategory': 'lopes:ecommerce:[[nome-formulario]]',
+  'eventAction': 'checkout',
+  'eventLabel': 'checkout-etapa-[[checkout-index]]',
+  'ecommerce': {
+    'checkout': {
+      'actionField': {'step': '[[checkout-index]]'},
+      'products': [{
+      	'dimension7': '[[imovel-end-completo]]',
+     	'id': '[[id-produto]]',
+		'name': '[[nome-produto]]',
+		'price': '[[preco-produto]',
+		'category': '[[categoria-produto]]',
+		'brand': '[[marca-produto]]',
+		'variant': '[[variacao-produto]]',
+		'quantity': '[[quantidade-produto]]'
+      }]
+    }
+  }
+});
+</script>
+```
+
+| Variável                 | Exemplo                                    | Descrição                                                            |
+|--------------------------|--------------------------------------------|----------------------------------------------------------------------|
+| [[nome-formulario]]    | 'fale-com-corretor'e etc  | Deve retornar o nome do formulário.                                       |
+| [[checkout-index]]    | '1' e etc  | Retornar "1","2" e etc de acordo com a etapa do funil Ex: Clique no botão do formulário = 1.                                       |
+| [[imovel-end-completo]]          | 'QnJhc2lsL1NQL1PDo28gUGF1bG8vQXZlbmlkYSBGYXJpYSBMaW1hLCAyMDAw'          | Endereço completo do imóvel no padrão Pais/UF/Cidade/Logradouro hashed em base64|
+| [[id-produto]]    | '123456789'e etc  | ID do produto (imóvel).                                       |
+| [[nome-produto]]         | 'Belint Bela Vista' e etc | Nome do produto (imóvel).                                     |
+| [[preco-produto] | '650000.00' e etc                        | Preço do produto (imóvel)                           |
+| [[categoria-produto]]    | 'Lançamento - comercialização', 'Lançamento - breve', 'Lançamento - futuro', 'Pronto pra morar', 'Aluguel' e etc  | Categorização do produto (imóvel)                                |
+| [[marca-produto]]        | 'Lopes Prime', 'Lopes São Paulo' e etc                             | Nome da empresa comercializadora (imóvel).                                    |
+| [[variacao-produto]]     | 'SP/São Paulo/Zona Oeste/Pinheiros'        | UF/Cidade/Região/Bairro do produto (imóvel).      |
+| [[quantidade-produto]]   | '1' e etc                                  | Quantidade do produto (imóvel).                               |
+
+<br />
+
+**No callback de sucesso ou na tela de sucesso antes de transferir o usuário para falar com o consultor.**
+- **Onde:** No formulário Fale com o Consultor, nas páginas de ficha de imóvel.
+
+```html
+<script>
+dataLayer.push({
+  'event': 'purchase',
+  'eventCategory': 'lopes:ecommerce:[[nome-formulario]]',
+  'eventAction': 'purchase',
+  'eventLabel': undefined,
+  'dimension6': '[[canal-de-contato]]',
+  'ecommerce': {
+    'purchase': {
+      'actionField': {
+        'id': '[[id-transacao]]',   //ID da transação é obrigatório
+        'revenue': '[[valor-total-transacao]]',
+        'affiliation': '[[nome-formulario]]',
+      },
+      'products': [{
+  		'dimension7': '[[imovel-end-completo]]',
+        'id': '[[id-produto]]',
+        'name': '[[nome-produto]]',   //Nome ou ID do produto é obrigatório
+        'price': '[[preco-produto]]',
+        'category': '[[categoria-produto]]',
+        'brand': '[[marca-produto]]',
+        'variant': '[[variacao-produto]]',
+        'quantity': '[[quantidade-produto]]',
+      }]
+    }
+  }
+});
+</script>
+```
+
+*Descrição Purchase:*
+
+| Variável                 | Exemplo                                    | Descrição                                                            |
+|--------------------------|--------------------------------------------|----------------------------------------------------------------------|
+| [[nome-formulario]]    | 'fale-com-corretor'e etc  | Deve retornar o nome do formulário.                                       |
+| [[canal-de-contato]]    | 'whatsapp', 'email', 'celular' e etc  | Canal de contato selecionado no formulário de Fale com o Consultor.                                       |
+| id      | [[id-transacao]]      | '11652'        | ID único do lead.                 |
+| revenue     | [[valor-total-transacao]] | '650000.00'        | Receita do produto (imóvel)  |
+| affiliation | [[nome-formulario]]    | 'fale-com-corretor'e etc        | Nome do formulário.            |
+
+<br />
+ 
+*Descrição Produtos:*
+ 
+| Variável                 | Exemplo                                    | Descrição                                                            |
+|--------------------------|--------------------------------------------|----------------------------------------------------------------------|
+| [[imovel-end-completo]]          | 'QnJhc2lsL1NQL1PDo28gUGF1bG8vQXZlbmlkYSBGYXJpYSBMaW1hLCAyMDAw'          | Endereço completo do imóvel no padrão Pais/UF/Cidade/Logradouro hashed em base64|
+| [[id-produto]]    | '123456789'e etc  | ID do produto (imóvel).                                       |
+| [[nome-produto]]         | 'Belint Bela Vista' e etc | Nome do produto (imóvel).                                     |
+| [[preco-produto] | '650000.00' e etc                        | Preço do produto (imóvel)                           |
+| [[categoria-produto]]    | 'Lançamento - comercialização', 'Lançamento - breve', 'Lançamento - futuro', 'Pronto pra morar', 'Aluguel' e etc  | Categorização do produto (imóvel)                                |
+| [[marca-produto]]        | 'Lopes Prime', 'Lopes São Paulo' e etc                             | Nome da empresa comercializadora (imóvel).                                    |
+| [[variacao-produto]]     | 'SP/São Paulo/Zona Oeste/Pinheiros'        | UF/Cidade/Região/Bairro do produto (imóvel).      |
+| [[quantidade-produto]]   | '1' e etc                                  | Quantidade do produto (imóvel).                               |
+
+**No erro do formulário de lead Fale com o consultor**
+- **Onde:** Nas páginas da ficha de imóvel
+
+```html
+<script>
+	window.dataLayer.push({
+		'event': 'event',
+		'eventCategory': 'lopes:formulario',
+		'eventAction': 'erro:fale-corretor',
+		'eventLabel': '[[tipo-erro]]'
+	});
+</script>
+```
+
+
+| Variável 				| Exemplo 				| Descrição 									|
+| :--------------------	| :-------------------- | :-------------------------------------------	|
+| [[tipo-erro]]			| 'campos incorretos - email', 'erro de envio' e etc				| Deve retornar os erros na tentativa de envio do formulário										|
+
+<br />
+
+---
+## Outros Formulários
+
+**No callback de sucesso do formulário para receber a newsletter**
+- **Onde:** No rodapé de todas as páginas
+
+```html
+<script>
+	window.dataLayer.push({
+		'event': 'conversion',
+		'eventCategory': 'lopes:formulario',
+		'eventAction': 'callback:newsletter',
+		'eventLabel': 'sucesso'
+	});
+</script>
+```
+
+**No callback de sucesso do formulário para entrar em contato via Fale Conosco**
+- **Onde:** Na seção de fale conosco
+
+```html
+<script>
+	window.dataLayer.push({
+		'event': 'conversion',
+		'eventCategory': 'lopes:formulario',
+		'eventAction': 'callback:fale-conosco',
 		'eventLabel': 'sucesso'
 	});
 </script>
@@ -156,305 +447,10 @@ Deve ser disparado um push de dataLayer no momento de carregamento de todas as p
 
 <br />
 
----
+## Considerações Finais:
 
-## Enhanced Ecommerce.
+> Link de referência: [Documentação Oficial Google Tag Manager](https://developers.google.com/tag-manager/quickstart)
 
-### Product Impression:
-
-**No carregamento das páginas que contem vitrines de produtos - Páginas de Lista de produtos:**
-
-- **Onde:** Em todas as páginas do site que exibem vitrines com diversos produtos - Home, Categorias, Marcas, Etc, e subcategorias correspondentes.
-
-```html
-<script>
-dataLayer.push({
-	'event': 'productImpression',
-	'eventCategory': 'biuti:[[sessao]]',
-	'eventAction': 'enhanced-ecommerce',
-	'eventLabel': 'lista-de-produtos',
-	'ecommerce': {
-		'impressions': [{
-			'name': '[[nome-produto]]',				
-			'id': '[[id-produto]]',
-			'price': '[[preco-produto]]',
-			'brand': '[[marca-produto]]',
-			'category': '[[categoria-produto]]',
-			'variant': '[[variacao-produto]]',
-			'list': '[[lista-produto]]',
-			'position': '[[posicao-produto]]'
-		}]
-	}
-});
-</script>
-```
-
-<br />
-
-| Variável 					| Exemplo 						| Descrição 								|
-| :------------------------ | :------------------------ 	| :---------------------------------------- |
-| [[sessao]] 				| 'home', 'categorias' e etc. 	| Retornar a sessão atual do usuário.		|
-| [[nome-produto]] 			| 'batom-avon-vermelho' 		| Retornar o nome do produto. 				|
-| [[id-produto]] 			| 'i17mcjf106-771-2'			| Retornar o ID do produto. 				|
-| [[preco-produto]] 		| '139.99'						| Retornar o preço do produto.				|
-| [[marca-produto]] 		| 'avon'	 					| Retornar a marca do produto. 	 			|
-| [[categoria-produto]] 	| 'categorias/corpo'			| Retornar a categoria do produto. 			|
-| [[variacao-produto]]		| '125g'						| Retornar o tamanho do produto. 			|
-| [[lista-produto]] 		| 'corpo'						| Retornar o nome da lista de produtos. 	|
-| [[posicao-produto]] 		| '2'							| Retornar a posição que o produto aparece na lista iniciando pelo número '1' 	|
-
-<br />
-
-### Product Click:
-
-**No clique dos produtos que abrem um produto especifico exibido na vitrine de produtos - Páginas de Lista de produtos:**
-
-- **Onde:** Em todas as páginas do site que exibem vitrines com diversos produtos - Home, Categorias, Marcas, Etc, e subcategorias correspondentes.
-- **Título ou nome do botão/link:** Imagem ou Descrição do produto que abre a página de detalhe do produto.
-
-```html
-<script>
-dataLayer.push({
-	'event': 'productClick',
-	'eventCategory': 'biuti:[[sessao]]',
-	'eventAction': 'enhanced-ecommerce',
-	'eventLabel': 'clique-produtos',
-	'ecommerce': {
-		'click': {
-			'actionField': {'list': '[[lista-produto]]'},
-			'products': [{
-				'name': '[[nome-produto]]',				
-				'id': '[[id-produto]]',
-				'price': '[[preco-produto]]',
-				'brand': '[[marca-produto]]',
-				'category': '[[categoria-produto]]',
-				'variant': '[[variacao-produto]]',
-				'position': '[[posicao-produto]]'
-			}]
-		}
-	}
-});
-</script>
-```
-
-<br />
-
-| Variável 					| Exemplo 						| Descrição 								|
-| :------------------------ | :------------------------ 	| :---------------------------------------- |
-| [[sessao]] 				| 'home', 'categorias' e etc. 	| Retornar a sessão atual do usuário.		|
-| [[nome-produto]] 			| 'batom-avon-vermelho' 		| Retornar o nome do produto. 				|
-| [[id-produto]] 			| 'i17mcjf106-771-2'			| Retornar o ID do produto. 				|
-| [[preco-produto]] 		| '139.99'						| Retornar o preço do produto.				|
-| [[marca-produto]] 		| 'avon'	 					| Retornar a marca do produto. 	 			|
-| [[categoria-produto]] 	| 'categorias/corpo'			| Retornar a categoria do produto. 			|
-| [[variacao-produto]]		| '125g'						| Retornar o tamanho do produto. 			|
-| [[lista-produto]] 		| 'corpo'						| Retornar o nome da lista de produtos. 	|
-| [[posicao-produto]] 		| '2'							| Retornar a posição que o produto aparece na lista iniciando pelo número '1' 	|
-
-<br />
-
-### Product Detail:
-
-**No carregamento das páginas de um produto especifico - Página de detalhe de produto:**
-
-- **Onde:** Em todas as páginas de detalhe dos produtos. 
-
-```html
-<script>
-dataLayer.push({
-	'event': 'productDetail',
-	'eventCategory': 'biuti:produtos',
-	'eventAction': 'enhanced-ecommerce',
-	'eventLabel': 'detalhes-do-produto',
-	'ecommerce': {
-		'detail': {
-			'actionField': {'list': '[[lista-produto]]'},
-			'products': [{
-				'name': '[[nome-produto]]',				
-				'id': '[[id-produto]]',
-				'price': '[[preco-produto]]',
-				'brand': '[[marca-produto]]',
-				'category': '[[categoria-produto]]',
-				'variant': '[[variacao-produto]]'
-			}]
-		}
-	}
- });
-</script>
-```
-
-<br />
-
-| Variável 					| Exemplo 						| Descrição 								|
-| :------------------------ | :------------------------ 	| :---------------------------------------- |
-| [[nome-produto]] 			| 'batom-avon-vermelho' 		| Retornar o nome do produto. 				|
-| [[id-produto]] 			| 'i17mcjf106-771-2'			| Retornar o ID do produto. 				|
-| [[preco-produto]] 		| '139.99'						| Retornar o preço do produto.				|
-| [[marca-produto]] 		| 'avon'	 					| Retornar a marca do produto. 	 			|
-| [[categoria-produto]] 	| 'categorias/corpo'			| Retornar a categoria do produto. 			|
-| [[variacao-produto]]		| '125g'						| Retornar o tamanho do produto. 			|
-| [[lista-produto]] 		| 'corpo'						| Retornar o nome da lista de produtos. 	|
-
-<br />
-
-### AddToCart:
-
-**No clique dos botões que tenham a ação para adicionar o produto na sacola:**
-
-- **Onde:** Em todas as páginas de detalhe dos produtos ou em paginas que exibem vitrines de produtos.
-- **Título ou nome do botão/link:** 'Adicionar na Sacola'.
-
-```html
-<script>
-dataLayer.push({
-	'event': 'addToCart',
-	'eventCategory': 'biuti:[[sessao]]',
-	'eventAction': 'enhanced-ecommerce',
-	'eventLabel': 'adicao-ao-carrinho',
-	'ecommerce': {
-		'add': {
-			'products': [{
-				'name': '[[nome-produto]]',				
-				'id': '[[id-produto]]',
-				'price': '[[preco-produto]]',
-				'brand': '[[marca-produto]]',
-				'category': '[[categoria-produto]]',
-				'variant': '[[variacao-produto]]',
-				'quantity': '[[quantidade-produto]]'
-			}]
-		}
-	}
-});
-</script>
-```
-
-<br />
-
-| Variável 					| Exemplo 									| Descrição 								|
-| :------------------------ | :------------------------ 				| :---------------------------------------- |
-| [[sessao]] 				| 'produtos', 'home', 'categorias' e etc. 	| Retornar a sessão atual do usuário.		|
-| [[nome-produto]] 			| 'batom-avon-vermelho' 					| Retornar o nome do produto. 				|
-| [[id-produto]] 			| 'i17mcjf106-771-2'						| Retornar o ID do produto. 				|
-| [[preco-produto]] 		| '139.99'									| Retornar o preço do produto.				|
-| [[marca-produto]] 		| 'avon'	 								| Retornar a marca do produto. 	 			|
-| [[categoria-produto]] 	| 'categorias/corpo'						| Retornar a categoria do produto. 			|
-| [[variacao-produto]]		| '125g'									| Retornar o tamanho do produto. 			|
-| [[quantidade-produto]] 	| '1'										| Retornar a quantidade do produto.			|
-
-<br />
-
-### Checkout:
-
-**No carregamento das páginas do fluxo de checkout correspondete ao carrinho, escolha de entrega e  meios de pagamento:**
- 
-- **Onde:** Nas páginas do fluxo de checkout.
-
-```html
-<script>
-dataLayer.push({
-	'event': 'checkout',
-	'eventCategory': 'biuti:checkout',
-	'eventAction': 'enhanced-ecommerce',
-	'eventLabel': 'checkout-etapa-[[passo-checkout]]',
-	'ecommerce': {
-		'checkout': {
-			'actionField': {'step': '[[checkout-index]]'},
-			'products': [{
-				'name': '[[nome-produto]]',				
-				'id': '[[id-produto]]',
-				'price': '[[preco-produto]]',
-				'brand': '[[marca-produto]]',
-				'category': '[[categoria-produto]]',
-				'variant': '[[variacao-produto]]',
-				'quantity': '[[quantidade-produto]]'
-			}]
-		}
-	}
-});
-</script>
-```
- 
-<br />
- 
-| Variável 					| Exemplo 									| Descrição 								|
-| :------------------------ | :------------------------ 				| :---------------------------------------- |
-| [[checkout-index]] 		| '1', '2' ou '3' 							| Retornar de acordo com a página de checkout que o usuário está (Página de Carrinho = 1/ Página de entrega = 2 / Página de pagamento = 3)		|
-| [[passo-checkout]] 		| 'carrinho', 'entrega' ou 'pagamento' 		| Retornar de acordo com a página de checkout que o usuário está.	|	
-| [[nome-produto]] 			| 'batom-avon-vermelho' 					| Retornar o nome do produto. 				|
-| [[id-produto]] 			| 'i17mcjf106-771-2'						| Retornar o ID do produto. 				|
-| [[preco-produto]] 		| '139.99'									| Retornar o preço do produto.				|
-| [[marca-produto]] 		| 'avon'	 								| Retornar a marca do produto. 	 			|
-| [[categoria-produto]] 	| 'categorias/corpo'						| Retornar a categoria do produto. 			|
-| [[variacao-produto]]		| '125g'									| Retornar o tamanho do produto. 			|
-| [[quantidade-produto]] 	| '1'										| Retornar a quantidade do produto.			|
- 
-<br />
- 
-### Purchase:
-
-**No carregamento de sucesso da página de compra do pedido. :**
- 
-- **Onde:** Nas páginas de resumo do pedido finalizado.
- 
-```html
-<script>
-dataLayer.push({
-	'event': 'purchase',
-	'eventCategory': 'biuti:checkout',
-	'eventAction': 'enhanced-ecommerce',
-	'eventLabel': 'purchase',
-	'ecommerce': {
-		'purchase': {
-			'actionField': {
-				'id': '[[id-transacao]]',
-				'revenue': '[[valor-total-transacao]]',
-				'shipping': '[[frete-transacao]]'
-			},
-			'products': [{
-				'name': '[[nome-produto]]',				
-				'id': '[[id-produto]]',
-				'price': '[[preco-produto]]',
-				'brand': '[[marca-produto]]',
-				'category': '[[categoria-produto]]',
-				'variant': '[[variacao-produto]]',
-				'quantity': '[[quantidade-produto]]',
-			}]
-		}
-	}
-});
-</script>
-```
-
-<br />
- 
-| Variável 					| Exemplo 									| Descrição 								|
-| :------------------------ | :------------------------ 				| :---------------------------------------- |
-| [[id-transacao]] 			| '000011652' 								| Retornar o ID único da transação.			|
-| [[valor-total-transacao]]	| '139.99' 									| Retornar o valor total da transação incluindo fretes e taxas.	|
-| [[frete-transacao]]		| '0.00'									| Retornar o valor do frete da transação. 	|
-| [[nome-produto]] 			| 'batom-avon-vermelho' 					| Retornar o nome do produto. 				|
-| [[id-produto]] 			| 'i17mcjf106-771-2'						| Retornar o ID do produto. 				|
-| [[preco-produto]] 		| '139.99'									| Retornar o preço do produto.				|
-| [[marca-produto]] 		| 'avon'	 								| Retornar a marca do produto. 	 			|
-| [[categoria-produto]] 	| 'categorias/corpo'						| Retornar a categoria do produto. 			|
-| [[variacao-produto]]		| '125g'									| Retornar o tamanho do produto. 			|
-| [[quantidade-produto]] 	| '1'										| Retornar a quantidade do produto.			|
- 
-<br />
- 
----
- 
-## Considerações Finais
- 
-> Recomendações do Google:
-> 1. [Enhanced Ecommerce - Product Impressions](https://developers.google.com/tag-manager/enhanced-ecommerce#product-impressions)
-> 2. [Enhanced Ecommerce - Product Clicks](https://developers.google.com/tag-manager/enhanced-ecommerce#product-clicks)
-> 3. [Enhanced Ecommerce - Product Detail](https://developers.google.com/tag-manager/enhanced-ecommerce#details)
-> 4. [Enhanced Ecommerce - AddToCart / Remove From Cart](https://developers.google.com/tag-manager/enhanced-ecommerce#cart)
-> 5. [Enhanced Ecommerce - Checkout](https://developers.google.com/tag-manager/enhanced-ecommerce#checkout)
-> 6. [Enhanced Ecommerce - Purchase](https://developers.google.com/tag-manager/enhanced-ecommerce#purchases)
- 
- 
 <script>
   document.addEventListener("DOMContentLoaded", function(event) {
     document.querySelectorAll("h1 a")[0].style.display = 'none';
