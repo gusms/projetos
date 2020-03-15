@@ -1,6 +1,6 @@
 # Especificação Técnica 
 ## Instalação do Google Tag Manager - Lopes Portal
-Última atualização: 05/03/2020
+Última atualização: 15/03/2020
 
 ## Objetivo
 Esse documento descreve os detalhes de como instalar o Google Tag Manager em seu site (Lopes Portal - lopes.com.br).<br />
